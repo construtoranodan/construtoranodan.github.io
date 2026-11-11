@@ -1,861 +1,683 @@
-```html
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#102033">
-  <title>NODAN | Gestão de Imóveis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construtora Nodan - Gestão Financeira</title>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Chart.js para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-dark: #0f172a;
+            --secondary: #0284c7;
+            --accent: #f59e0b;
+            --bg-light: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
 
-  <!-- Script Oficial de Login do Google -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
-  <style>
-    :root {
-      --navy: #102033;
-      --navy-2: #172c43;
-      --navy-3: #203a55;
-      --gold: #c6a66c;
-      --gold-light: #e9ddc7;
-      --ink: #182638;
-      --muted: #718094;
-      --line: #e4eaf0;
-      --canvas: #f4f6f8;
-      --white: #fff;
-      --green: #2d7a54;
-      --green-bg: #eaf5ee;
-      --shadow: 0 14px 35px rgba(19, 36, 56, .08);
-      --radius: 18px;
-    }
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-    * { box-sizing: border-box; }
-    [hidden] { display: none !important; }
-    html { scroll-behavior: smooth; }
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
 
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: var(--canvas);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-    button, input, select, textarea { font: inherit; }
-    button { cursor: pointer; }
-    a { color: inherit; }
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
 
-    .login-screen {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 30px 20px;
-      background:
-        radial-gradient(ellipse at 85% 18%, rgba(198, 166, 108, .18), transparent 31%),
-        linear-gradient(135deg, #0c1927 0%, #142b41 55%, #0e2033 100%);
-      color: #fff;
-      text-align: center;
-    }
+        .user-panel {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-    .login-box {
-      width: min(420px, 100%);
-      padding: 40px 30px;
-      border: 1px solid rgba(255,255,255,.13);
-      border-radius: 24px;
-      background: rgba(255,255,255,.075);
-      box-shadow: 0 25px 70px rgba(0,0,0,.18);
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        .user-info {
+            text-align: right;
+            font-size: 0.9rem;
+        }
 
-    .login-logo {
-      width: 180px;
-      height: 65px;
-      margin: 0 auto 20px;
-      padding: 10px 15px;
-      border-radius: 14px;
-      background: #fff;
-    }
+        .user-name {
+            font-weight: 600;
+        }
 
-    .login-box h1 { margin: 0 0 8px; font-size: 26px; letter-spacing: -.03em; }
-    .login-box p { margin: 0 0 24px; color: rgba(255,255,255,.6); font-size: 13px; line-height: 1.6; }
+        .user-role {
+            font-size: 0.75rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.2);
+            display: inline-block;
+            margin-top: 2px;
+        }
 
-    .login-error {
-      margin-top: 18px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: rgba(220, 60, 60, .15);
-      border: 1px solid rgba(220, 60, 60, .3);
-      color: #ff8a8a;
-      font-size: 12px;
-      line-height: 1.5;
-      width: 100%;
-    }
+        .btn-logout {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
 
-    .login-loading { margin-top: 18px; color: rgba(255,255,255,.6); font-size: 12px; }
-    .login-footer { margin-top: 30px; color: rgba(255,255,255,.35); font-size: 10px; }
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.1);
+        }
 
-    .logo-mark { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .logo-mark img { display: block; max-width: 100%; max-height: 100%; object-fit: contain; }
-    .logo-fallback { color: var(--navy); font-size: 25px; font-weight: 850; letter-spacing: .18em; }
+        /* MAIN CONTAINER */
+        main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
 
-    .welcome-screen {
-      min-height: 100vh;
-      position: relative;
-      isolation: isolate;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      padding: 28px clamp(20px, 5vw, 76px) 24px;
-      color: #fff;
-      background:
-        radial-gradient(ellipse at 85% 18%, rgba(198, 166, 108, .18), transparent 31%),
-        linear-gradient(135deg, #0c1927 0%, #142b41 55%, #0e2033 100%);
-    }
+        /* LOGIN OVERLAY */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
 
-    .welcome-top { width: min(1320px, 100%); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .welcome-logo-box { width: 205px; height: 72px; padding: 10px 17px; border-radius: 15px; background: #fff; box-shadow: 0 8px 26px rgba(0,0,0,.12); }
-    .welcome-top-note, .welcome-kicker { display: inline-flex; align-items: center; gap: 10px; color: rgba(255,255,255,.72); font-size: 11px; font-weight: 750; letter-spacing: .17em; text-transform: uppercase; }
-    .welcome-top-note::before, .welcome-kicker::before { content: ""; width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 5px rgba(198,166,108,.13); }
-    .welcome-content { width: min(1320px, 100%); margin: auto; padding: 65px 0 70px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(330px, .8fr); align-items: center; gap: clamp(40px, 8vw, 120px); }
-    .welcome-copy h1 { max-width: 720px; margin: 20px 0; font-size: clamp(43px, 6.2vw, 82px); line-height: .99; letter-spacing: -.055em; font-weight: 760; }
-    .welcome-copy h1 em { color: var(--gold); font-style: normal; }
-    .welcome-copy > p { max-width: 560px; margin: 0; color: rgba(255,255,255,.68); font-size: 16px; line-height: 1.8; }
+        .login-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
 
-    .welcome-cta {
-      min-height: 54px; margin-top: 30px; padding: 0 23px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; border: 0; border-radius: 12px; color: #19293a; background: var(--gold); font-weight: 800; box-shadow: 0 12px 28px rgba(0,0,0,.18); transition: transform .2s ease, background .2s ease;
-    }
-    .welcome-cta:hover { transform: translateY(-2px); background: #d3b783; }
-    .welcome-cta svg { width: 19px; height: 19px; }
-    .welcome-caption { margin-top: 20px; color: rgba(255,255,255,.48); font-size: 12px; }
-    .welcome-preview { padding: 25px; border: 1px solid rgba(255,255,255,.13); border-radius: 24px; background: rgba(255,255,255,.075); box-shadow: 0 25px 70px rgba(0,0,0,.18); backdrop-filter: blur(12px); }
-    .preview-topline { display: flex; justify-content: space-between; align-items: center; color: rgba(255,255,255,.6); font-size: 10px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
-    .preview-topline span { color: var(--gold); letter-spacing: .04em; }
-    .preview-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 24px 0; }
-    .preview-stat { min-height: 95px; padding: 16px 12px; border: 1px solid rgba(255,255,255,.10); border-radius: 15px; background: rgba(255,255,255,.055); }
-    .preview-stat strong { display: block; color: #fff; font-size: 29px; line-height: 1.1; }
-    .preview-stat span { display: block; margin-top: 8px; color: rgba(255,255,255,.57); font-size: 11px; }
-    .preview-feature { display: flex; align-items: center; gap: 14px; padding: 17px; border-radius: 16px; background: rgba(8, 19, 31, .36); }
-    .preview-feature-icon { width: 43px; height: 43px; flex: 0 0 43px; display: grid; place-items: center; border-radius: 13px; color: var(--gold); background: rgba(198,166,108,.15); }
-    .preview-feature-icon svg { width: 22px; height: 22px; }
-    .preview-feature strong { display: block; font-size: 14px; }
-    .preview-feature span { display: block; margin-top: 5px; color: rgba(255,255,255,.54); font-size: 12px; }
-    .preview-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 17px; }
-    .preview-pills span { padding: 7px 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 99px; color: rgba(255,255,255,.68); font-size: 10px; }
-    .welcome-footer { width: min(1320px, 100%); margin: 0 auto; display: flex; justify-content: space-between; gap: 15px; color: rgba(255,255,255,.42); font-size: 11px; }
+        .login-card h2 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
 
-    .app-shell { min-height: 100vh; display: grid; grid-template-columns: 250px minmax(0, 1fr); }
-    .sidebar { position: sticky; top: 0; height: 100vh; padding: 25px 17px 18px; display: flex; flex-direction: column; color: rgba(255,255,255,.78); background: var(--navy); }
-    .sidebar-brand { padding: 0 5px; }
-    .sidebar-logo-box { width: 100%; height: 70px; padding: 9px 16px; border-radius: 14px; background: #fff; }
-    .sidebar-brand-caption { margin-top: 12px; color: rgba(255,255,255,.42); font-size: 9px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
-    .sidebar-section-label { margin: 34px 12px 11px; color: rgba(255,255,255,.39); font-size: 9px; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
-    .nav-item { width: 100%; min-height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 11px; border: 0; border-radius: 11px; color: rgba(255,255,255,.72); background: transparent; text-align: left; transition: background .18s, color .18s; }
-    .nav-item svg { width: 19px; height: 19px; flex: 0 0 19px; }
-    .nav-item span:nth-child(2) { flex: 1; font-size: 13px; font-weight: 650; }
-    .nav-item:hover, .nav-item.active { color: #fff; background: rgba(255,255,255,.10); }
-    .nav-count { min-width: 25px; padding: 4px 6px; border-radius: 20px; color: var(--gold-light); background: rgba(198,166,108,.15); font-size: 10px; text-align: center; }
-    .sidebar-bottom { margin-top: auto; }
-    .sidebar-note { padding: 15px 13px; border: 1px solid rgba(255,255,255,.10); border-radius: 13px; background: rgba(255,255,255,.045); }
-    .sidebar-note-title { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.88); font-size: 11px; font-weight: 700; }
-    .sidebar-note-title svg { color: var(--gold); }
-    .sidebar-note p { margin: 8px 0 0; color: rgba(255,255,255,.48); font-size: 10px; line-height: 1.6; }
-    .sidebar-copyright { margin: 17px 3px 0; color: rgba(255,255,255,.32); font-size: 9px; }
+        .login-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
 
-    .sidebar-user { margin-top: 14px; padding: 12px 13px; border: 1px solid rgba(255,255,255,.10); border-radius: 13px; background: rgba(255,255,255,.045); display: flex; align-items: center; gap: 10px; }
-    .sidebar-user-avatar { width: 34px; height: 34px; flex: 0 0 34px; border-radius: 50%; background: rgba(198,166,108,.2); display: grid; place-items: center; color: var(--gold); font-size: 13px; font-weight: 800; }
-    .sidebar-user-info { min-width: 0; flex: 1; }
-    .sidebar-user-info strong { display: block; color: rgba(255,255,255,.85); font-size: 11px; }
-    .sidebar-user-info span { display: block; color: rgba(255,255,255,.42); font-size: 9px; }
+        /* CARDS DE IMÓVEIS / GRUPOS */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
 
-    .sidebar-logout { margin-top: 8px; width: 100%; min-height: 36px; padding: 0 12px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid rgba(255,255,255,.10); border-radius: 10px; color: rgba(255,255,255,.55); background: transparent; font-size: 10px; font-weight: 700; transition: all .18s; }
-    .sidebar-logout:hover { color: #fff; background: rgba(220,60,60,.2); border-color: rgba(220,60,60,.3); }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
 
-    .main-area { min-width: 0; }
-    .desktop-topbar { min-height: 72px; padding: 0 clamp(24px,4vw,52px); display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.92); }
-    .topbar-breadcrumb { color: var(--muted); font-size: 12px; }
-    .topbar-breadcrumb strong { color: var(--ink); font-weight: 700; }
-    .topbar-separator { margin: 0 8px; color: #c0c8d1; }
-    .topbar-status { display: inline-flex; align-items: center; gap: 8px; color: #708092; font-size: 11px; }
-    .topbar-status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(45,122,84,.12); }
-    .mobile-bar { display: none; }
-    .content-wrap { width: min(1500px, 100%); margin: 0 auto; padding: 34px clamp(22px,4vw,54px) 60px; }
+        .property-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-    .page-heading { margin-bottom: 27px; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
-    .eyebrow { margin: 0 0 9px; color: #9a7a43; font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
-    .page-heading h1, .detail-heading h1 { margin: 0; color: var(--ink); font-size: clamp(30px,3.4vw,42px); line-height: 1.1; letter-spacing: -.045em; }
-    .page-heading p { margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+        .property-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
 
-    .heading-summary { min-width: 190px; padding: 15px 18px; display: flex; align-items: center; gap: 13px; border: 1px solid var(--line); border-radius: 15px; background: #fff; box-shadow: 0 5px 18px rgba(19,36,56,.035); }
-    .heading-summary-icon { width: 41px; height: 41px; display: grid; place-items: center; border-radius: 12px; color: #947441; background: #f5efe4; }
-    .heading-summary-icon svg { width: 21px; height: 21px; }
-    .heading-summary strong { display: block; color: var(--ink); font-size: 19px; line-height: 1.1; }
-    .heading-summary span { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+        .card-img-container {
+            width: 100%;
+            height: 180px;
+            background-color: #cbd5e1;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .list-tools { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 17px; }
-    .search-box { width: min(440px, 100%); min-height: 46px; padding: 0 13px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; transition: border .18s, box-shadow .18s; }
-    .search-box:focus-within { border-color: #c4a56d; box-shadow: 0 0 0 3px rgba(198,166,108,.12); }
-    .search-box svg { width: 18px; height: 18px; flex: 0 0 18px; color: #8794a3; }
-    .search-box input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 12px; }
-    .search-box input::placeholder { color: #a1acb8; }
-    .results-count { color: var(--muted); font-size: 11px; white-space: nowrap; }
+        .card-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    .filter-row { margin-bottom: 31px; display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 7px; scrollbar-width: thin; }
-    .filter-chip { flex: 0 0 auto; min-height: 34px; padding: 0 12px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 30px; color: #657488; background: #fff; font-size: 10px; font-weight: 650; transition: all .18s; }
-    .filter-chip span { min-width: 19px; padding: 3px 5px; border-radius: 20px; color: #8090a1; background: #f1f4f6; font-size: 9px; text-align: center; }
-    .filter-chip:hover, .filter-chip.active { border-color: var(--navy); color: #fff; background: var(--navy); }
-    .filter-chip.active span { color: #fff; background: rgba(255,255,255,.16); }
+        .card-body {
+            padding: 1.2rem;
+        }
 
-    .group-section { margin-top: 26px; }
-    .group-heading { margin-bottom: 15px; display: flex; align-items: center; gap: 14px; }
-    .group-heading-copy { min-width: 0; }
-    .group-overline { color: #9a7a43; font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
-    .group-heading h2 { margin: 4px 0 0; color: var(--ink); font-size: 17px; letter-spacing: -.02em; }
-    .group-heading p { margin: 4px 0 0; color: var(--muted); font-size: 10px; }
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
 
-    .unit-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
-    .unit-card { min-width: 0; overflow: hidden; display: block; border: 1px solid var(--line); border-radius: 17px; color: inherit; background: #fff; text-decoration: none; box-shadow: 0 4px 14px rgba(19,36,56,.025); transition: transform .2s, box-shadow .2s, border-color .2s; }
-    .unit-card:hover { transform: translateY(-3px); border-color: #d6c29e; box-shadow: var(--shadow); }
-    .unit-card[hidden] { display: none !important; }
-    .unit-card-body { padding: 14px 15px 13px; }
-    .unit-card-topline { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .status-tag { max-width: 100%; padding: 5px 8px; overflow: hidden; border-radius: 30px; color: #596b7b; background: #eef2f5; font-size: 9px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-    .status-tag.contract { color: #2d7a54; background: #eaf5ee; }
-    .status-tag.owned { color: #8a6a32; background: #f6f0e4; }
-    .status-tag.condo { color: #52698c; background: #edf1f8; }
+        .card-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
 
-    .unit-card-arrow { width: 27px; height: 27px; flex: 0 0 27px; display: grid; place-items: center; border-radius: 50%; color: #708094; background: #f4f6f8; transition: all .18s; }
-    .unit-card:hover .unit-card-arrow { color: #fff; background: var(--navy); transform: translateX(2px); }
-    .unit-card-arrow svg { width: 15px; height: 15px; }
-    .unit-card h3 { margin: 12px 0 4px; overflow-wrap: anywhere; color: var(--ink); font-size: 15px; letter-spacing: -.02em; }
-    .unit-card-location { margin: 0; overflow: hidden; color: var(--muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
-    .unit-card-footer { margin-top: 14px; padding-top: 11px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid #edf0f3; }
-    .unit-card-footer span { color: #8b98a6; font-size: 10px; }
-    .unit-card-footer strong { color: var(--ink); font-size: 11px; }
+        /* FORMULÁRIO DE NOVO PAGAMENTO */
+        .form-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 2.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
 
-    .no-results { margin-top: 24px; padding: 34px 20px; border: 1px dashed #cbd4de; border-radius: 16px; color: var(--muted); background: #fff; text-align: center; font-size: 13px; }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
 
-    .photo-frame { position: relative; overflow: hidden; isolation: isolate; background: linear-gradient(135deg, #314a61, #14283c); }
-    .photo-frame img { position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .45s; }
-    .photo-fallback { position: absolute; z-index: 0; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 12px; color: rgba(255,255,255,.83); background: radial-gradient(circle at 80% 18%, rgba(198,166,108,.23), transparent 30%), linear-gradient(135deg, #344f68, #14283c); text-align: center; transition: opacity .25s, visibility .25s; }
-    .photo-frame.is-loaded .photo-fallback { visibility: hidden; opacity: 0; }
-    .fallback-icon { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; color: var(--gold-light); font-size: 16px; font-weight: 800; letter-spacing: .08em; }
-    .fallback-label { max-width: 90%; font-size: 11px; font-weight: 650; }
-    .photo-fallback small { color: rgba(255,255,255,.50); font-size: 9px; }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
 
-    .group-photo-frame { width: 66px; height: 58px; flex: 0 0 66px; border-radius: 13px; }
-    .group-photo-frame .fallback-icon { width: 25px; height: 25px; border-radius: 8px; font-size: 11px; }
-    .group-photo-frame .fallback-label, .group-photo-frame .photo-fallback small { display: none; }
-    .unit-photo-frame { width: 100%; height: 177px; }
-    .unit-card:hover .unit-photo-frame img { transform: scale(1.04); }
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
 
-    .detail-heading { margin-bottom: 21px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
-    .detail-heading p { margin: 9px 0 0; color: var(--muted); font-size: 12px; }
-    .detail-heading p span { color: #9a7a43; font-weight: 700; }
+        .form-group input, .form-group select {
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+        }
 
-    .back-link { flex: 0 0 auto; min-height: 39px; padding: 0 12px; display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 10px; color: #536478; background: #fff; font-size: 10px; font-weight: 700; transition: all .18s; }
-    .back-link:hover { border-color: var(--navy); color: #fff; background: var(--navy); }
-    .back-link svg { width: 16px; height: 16px; }
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--secondary);
+        }
 
-    .detail-cover { position: relative; height: clamp(255px, 31vw, 410px); overflow: hidden; border-radius: 21px; background: var(--navy-2); box-shadow: var(--shadow); }
-    .detail-photo-frame { width: 100%; height: 100%; }
-    .detail-photo-frame::after { content: ""; position: absolute; z-index: 2; inset: 0; background: linear-gradient(180deg, rgba(7,17,27,.04) 20%, rgba(7,17,27,.78) 100%); pointer-events: none; }
-    .detail-cover-content { position: absolute; z-index: 3; inset: 0; padding: clamp(18px, 3vw, 30px); display: flex; flex-direction: column; justify-content: space-between; color: #fff; }
-    .cover-topline, .cover-bottomline { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
-    .cover-status { display: inline-flex; align-items: center; padding: 8px 11px; border: 1px solid rgba(255,255,255,.21); border-radius: 30px; color: #fff; background: rgba(12,25,39,.52); backdrop-filter: blur(8px); font-size: 10px; font-weight: 700; }
-    .cover-image-note { color: rgba(255,255,255,.75); font-size: 10px; text-align: right; }
-    .cover-bottomline { align-items: flex-end; }
-    .cover-bottomline span { display: block; color: rgba(255,255,255,.68); font-size: 10px; }
-    .cover-bottomline strong { display: block; margin-top: 5px; font-size: 17px; }
-    .cover-price { text-align: right; }
-    .cover-price strong { font-size: clamp(19px, 2.5vw, 28px); letter-spacing: -.03em; }
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s;
+        }
 
-    .tabs-wrap { margin: 22px 0 18px; display: flex; justify-content: center; }
-    .tab-bar { width: min(880px, 100%); padding: 6px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; border: 1px solid #e8edf1; border-radius: 14px; background: #edf1f4; }
-    .tab-button { min-height: 48px; padding: 0 8px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 10px; color: #647488; background: transparent; font-size: 11px; font-weight: 750; transition: all .18s; white-space: nowrap; }
-    .tab-button svg { width: 17px; height: 17px; flex: 0 0 17px; }
-    .tab-button:hover { color: var(--ink); }
-    .tab-button.active { color: var(--navy); background: #fff; box-shadow: 0 3px 12px rgba(18,35,54,.09); }
-    .tab-button[data-tab="pagamentos"].active { color: var(--green); }
+        .btn-submit:hover {
+            background: var(--primary-dark);
+        }
 
-    .panel-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 16px; }
-    .panel { min-width: 0; padding: 22px; border: 1px solid var(--line); border-radius: 17px; background: #fff; box-shadow: 0 4px 14px rgba(19,36,56,.025); }
-    .panel-heading { margin-bottom: 19px; display: flex; align-items: flex-start; gap: 12px; }
-    .panel-icon { width: 38px; height: 38px; flex: 0 0 38px; display: grid; place-items: center; border-radius: 11px; color: #957746; background: #f5efe4; }
-    .panel-icon.green { color: #2d7a54; background: #eaf5ee; }
-    .panel-icon svg { width: 19px; height: 19px; }
-    .panel-heading h2 { margin: 1px 0 0; color: var(--ink); font-size: 14px; }
-    .panel-heading p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+        /* TABELA DE PAGAMENTOS */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
 
-    .info-field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; }
-    .info-field { min-width: 0; }
-    .info-field.wide { grid-column: 1 / -1; }
-    .info-field > span { display: block; margin-bottom: 6px; color: #8794a2; font-size: 9px; font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
-    .info-field strong { display: block; overflow-wrap: anywhere; color: #28394b; font-size: 11px; font-weight: 700; line-height: 1.6; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
 
-    .meters-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-    .meter-item { min-width: 0; min-height: 70px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #edf0f3; border-radius: 12px; background: #fbfcfd; }
-    .meter-icon { width: 32px; height: 32px; flex: 0 0 32px; display: grid; place-items: center; border-radius: 10px; color: #698096; background: #eef3f6; }
-    .meter-icon svg { width: 16px; height: 16px; }
-    .meter-item span { display: block; color: #8794a2; font-size: 9px; }
-    .meter-item strong { display: block; margin-top: 5px; overflow-wrap: anywhere; color: #28394b; font-size: 10px; }
+        th {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
 
-    .panel-footnote { margin-top: 14px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 9px; border-radius: 11px; color: #758395; background: #eef2f5; font-size: 10px; line-height: 1.6; }
-    .panel-footnote svg { width: 16px; height: 16px; flex: 0 0 16px; color: #73859a; }
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
 
-    .tenant-panel { max-width: 920px; margin: 0 auto; }
-    .tenant-profile { margin-bottom: 22px; padding-bottom: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #edf0f3; }
-    .tenant-avatar { width: 56px; height: 56px; flex: 0 0 56px; display: grid; place-items: center; border: 1px solid #e6d8bd; border-radius: 17px; color: #856b3c; background: #f6f0e5; font-size: 17px; font-weight: 800; letter-spacing: .04em; }
-    .tenant-profile .eyebrow { margin-bottom: 5px; font-size: 9px; }
-    .tenant-profile h2 { margin: 0; overflow-wrap: anywhere; color: var(--ink); font-size: 19px; letter-spacing: -.025em; }
-    .tenant-profile p { margin: 5px 0 0; color: var(--muted); font-size: 10px; }
-    .tenant-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 18px; }
+        tr:last-child td {
+            border-bottom: none;
+        }
 
-    .privacy-note { margin-top: 22px; padding: 12px 14px; display: flex; align-items: flex-start; gap: 9px; border-radius: 11px; color: #786c58; background: #f7f3eb; font-size: 10px; line-height: 1.6; }
-    .privacy-note svg { width: 16px; height: 16px; flex: 0 0 16px; }
+        .badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
 
-    .special-record { max-width: 780px; margin: 0 auto; padding: 35px 25px; border: 1px solid var(--line); border-radius: 17px; background: #fff; text-align: center; }
-    .special-record-icon { width: 54px; height: 54px; margin: 0 auto 14px; display: grid; place-items: center; border-radius: 16px; color: #8d7448; background: #f5efe4; }
-    .special-record-icon svg { width: 25px; height: 25px; }
-    .special-record h2 { margin: 0; color: var(--ink); font-size: 17px; }
-    .special-record p { max-width: 500px; margin: 9px auto 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+        .badge-admin { background: #dbeafe; color: #1e40af; }
+        .badge-leitura { background: #fef3c7; color: #92400e; }
 
-    .documents-panel { max-width: 850px; margin: 0 auto; }
-    .document-card { padding: 23px; display: flex; align-items: center; gap: 17px; border: 1px solid var(--line); border-radius: 15px; background: #fff; }
-    .document-icon { width: 52px; height: 52px; flex: 0 0 52px; display: grid; place-items: center; border-radius: 15px; color: #4f7892; background: #edf4f7; }
-    .document-icon svg { width: 25px; height: 25px; }
-    .document-copy { min-width: 0; flex: 1; }
-    .document-copy h2 { margin: 0; color: var(--ink); font-size: 14px; }
-    .document-copy p { margin: 6px 0 0; overflow-wrap: anywhere; color: var(--muted); font-size: 10px; line-height: 1.6; }
+        .btn-delete {
+            background: #fee2e2;
+            color: var(--danger);
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
 
-    .primary-button { min-height: 42px; padding: 0 16px; flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 10px; color: #fff; background: var(--navy); font-size: 11px; font-weight: 750; text-decoration: none; transition: background .18s, transform .18s; }
-    .primary-button:hover { transform: translateY(-1px); background: var(--navy-3); }
-    .primary-button svg { width: 15px; height: 15px; }
-    .primary-button.gold { color: #1a2838; background: var(--gold); }
-    .primary-button.gold:hover { background: #d3b783; }
+        .btn-delete:hover {
+            background: #fca5a5;
+        }
 
-    .documents-note { margin-top: 14px; color: #8995a2; font-size: 10px; line-height: 1.6; }
-    .empty-documents { max-width: 850px; margin: 0 auto; padding: 34px 22px; border: 1px dashed #cbd4de; border-radius: 16px; background: #fff; text-align: center; }
-    .empty-documents .document-icon { margin: 0 auto 13px; }
-    .empty-documents h2 { margin: 0; color: var(--ink); font-size: 15px; }
-    .empty-documents p { margin: 8px 0 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+            background: white;
+        }
 
-    .payments-wrapper { max-width: 1050px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
-    .payment-form-card { padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgba(19,36,56,.03); }
-    .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { color: #637385; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
-    .form-group input, .form-group select { min-height: 44px; padding: 0 12px; border: 1px solid #d4dde5; border-radius: 11px; color: var(--ink); background: #fff; font-size: 12px; transition: border .18s, box-shadow .18s; }
-    .form-group input:focus, .form-group select:focus { border-color: #c4a56d; box-shadow: 0 0 0 3px rgba(198,166,108,.12); outline: 0; }
-    .form-actions { margin-top: 16px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-    .save-feedback { display: inline-flex; align-items: center; gap: 7px; color: var(--green); font-size: 11px; font-weight: 700; }
-
-    .report-card { padding: 24px; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: 0 6px 20px rgba(19,36,56,.03); }
-    .report-topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
-    .year-selector { display: inline-flex; align-items: center; gap: 10px; background: #f4f6f8; padding: 6px 12px; border-radius: 12px; }
-    .year-selector label { color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
-    .year-selector select { border: 0; background: transparent; color: var(--ink); font-weight: 800; font-size: 14px; cursor: pointer; }
-    .report-stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
-    .report-stat-box { padding: 14px 16px; border: 1px solid #edf0f3; border-radius: 14px; background: #fbfcfd; }
-    .report-stat-box span { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; font-weight: 700; }
-    .report-stat-box strong { display: block; margin-top: 6px; color: var(--ink); font-size: 18px; }
-    .report-stat-box strong.green { color: var(--green); }
-
-    .month-filter-bar { display: flex; gap: 6px; overflow-x: auto; padding: 2px 2px 10px; scrollbar-width: thin; margin-bottom: 18px; border-bottom: 1px solid #edf1f4; }
-    .month-chip { flex: 0 0 auto; min-height: 34px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 20px; color: #647384; background: #fff; font-size: 10px; font-weight: 700; transition: all .18s; }
-    .month-chip:hover, .month-chip.active { border-color: var(--navy); color: #fff; background: var(--navy); }
-    .month-chip.has-payment { border-color: #badcc8; background: #f1f8f3; color: #266b49; }
-    .month-chip.has-payment.active { border-color: var(--navy); background: var(--navy); color: #fff; }
-    .month-chip-badge { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
-    .month-chip.active .month-chip-badge { background: var(--gold); }
-
-    .payments-table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    .payments-table th { padding: 10px 14px; text-align: left; color: #8292a2; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--line); }
-    .payments-table td { padding: 14px; border-bottom: 1px solid #f1f4f6; color: var(--ink); }
-    .payments-table tr:hover td { background: #fafbfc; }
-    .table-badge-month { display: inline-block; padding: 4px 8px; border-radius: 20px; background: #eef3f7; color: #3b5065; font-weight: 700; font-size: 10px; }
-    .table-amount { color: var(--green); font-weight: 800; font-size: 12px; }
-    .table-delete-btn { padding: 5px 8px; border: 1px solid #e8eef2; border-radius: 8px; background: #fff; color: #c04c4c; font-size: 10px; font-weight: 700; transition: all .18s; }
-    .table-delete-btn:hover { background: #fdf2f2; border-color: #f1c3c3; }
-
-    .empty-report { padding: 34px 18px; text-align: center; color: var(--muted); font-size: 12px; border: 1px dashed #d5dee6; border-radius: 14px; }
-    .sheet-sync-bar { padding: 14px 18px; border: 1px solid var(--line); border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
-    .sheet-sync-copy { display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--muted); }
-    .sheet-sync-copy svg { color: var(--green); }
-
-    @media (max-width: 1050px) {
-      .unit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .panel-grid { grid-template-columns: 1fr; }
-      .welcome-content { gap: 45px; }
-      .form-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 860px) {
-      .app-shell { display: block; }
-      .sidebar, .desktop-topbar { display: none; }
-      .mobile-bar { position: sticky; z-index: 20; top: 0; min-height: 64px; padding: 9px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.96); backdrop-filter: blur(12px); }
-      .mobile-logo-box { width: 132px; height: 43px; padding: 5px 9px; border: 1px solid #edf0f2; border-radius: 10px; background: #fff; }
-      .mobile-page-label { color: var(--muted); font-size: 10px; }
-      .mobile-back { min-height: 36px; padding: 0 10px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 9px; color: #4f6073; background: #fff; font-size: 10px; font-weight: 700; }
-      .mobile-back svg { width: 15px; height: 15px; }
-      .content-wrap { padding-top: 26px; }
-      .back-link { display: none; }
-      .welcome-content { grid-template-columns: 1fr; }
-      .welcome-preview { max-width: 560px; }
-      .welcome-copy h1 { max-width: 660px; }
-    }
-
-    @media (max-width: 600px) {
-      .welcome-screen { padding: 17px 18px 18px; }
-      .welcome-logo-box { width: 156px; height: 58px; padding: 8px 12px; }
-      .welcome-top-note { font-size: 8px; letter-spacing: .1em; }
-      .welcome-content { padding: 55px 0 40px; gap: 33px; }
-      .welcome-copy h1 { margin: 17px 0; font-size: clamp(43px, 12vw, 61px); }
-      .welcome-copy > p { font-size: 13px; }
-      .welcome-preview { padding: 17px; border-radius: 19px; }
-      .preview-stat { min-height: 78px; padding: 12px 9px; }
-      .preview-stat strong { font-size: 24px; }
-      .preview-stat span { font-size: 9px; }
-      .welcome-footer { flex-direction: column; font-size: 10px; }
-      .content-wrap { padding: 22px 16px 42px; }
-      .page-heading { align-items: flex-start; flex-direction: column; gap: 16px; }
-      .page-heading h1, .detail-heading h1 { font-size: 32px; }
-      .heading-summary { width: 100%; min-width: 0; }
-      .list-tools { align-items: flex-start; flex-direction: column; gap: 9px; }
-      .search-box { width: 100%; }
-      .unit-grid { grid-template-columns: 1fr; gap: 13px; }
-      .unit-photo-frame { height: 195px; }
-      .group-photo-frame { width: 58px; height: 54px; flex-basis: 58px; }
-      .group-heading h2 { font-size: 15px; }
-      .detail-heading { margin-bottom: 16px; }
-      .detail-cover { height: 280px; border-radius: 16px; }
-      .cover-bottomline { align-items: flex-end; }
-      .cover-bottomline strong { font-size: 14px; }
-      .cover-price strong { font-size: 19px; }
-      .tab-bar { gap: 2px; padding: 4px; border-radius: 12px; }
-      .tab-button { min-height: 44px; padding: 0 4px; gap: 4px; font-size: 9px; }
-      .tab-button svg { width: 14px; height: 14px; }
-      .panel { padding: 17px; }
-      .info-field-grid, .meters-grid { gap: 13px 11px; }
-      .tenant-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px 12px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .report-stats-grid { grid-template-columns: 1fr; }
-      .payments-table th:nth-child(4), .payments-table td:nth-child(4) { display: none; }
-      .login-box { padding: 30px 20px; }
-      .login-box h1 { font-size: 22px; }
-    }
-
-    @media (max-width: 380px) {
-      .info-field-grid, .meters-grid, .tenant-fields { grid-template-columns: 1fr; }
-      .info-field.wide { grid-column: auto; }
-      .mobile-bar { padding-right: 12px; padding-left: 12px; }
-      .mobile-logo-box { width: 115px; }
-    }
-  </style>
+        .hidden { display: none !important; }
+    </style>
 </head>
-
 <body>
 
-  <!-- TELA DE LOGIN -->
-  <div id="login-screen" class="login-screen">
-    <div class="login-box">
-      <div class="login-logo">
-        <span class="logo-mark">
-          <img src="Início_Images/1.Imagem.203651.png" alt="NODAN" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
-          <span class="logo-fallback" hidden>NODAN</span>
-        </span>
-      </div>
-      <h1>Acesso Restrito</h1>
-      <p>Faça login com sua conta Google autorizada para acessar o painel de gestão imobiliária.</p>
-
-      <!-- Botão Nativo do Google (Auto-Renderizável) -->
-      <div id="g_id_onload"
-           data-client_id="56923831884-rkm9qeor23tmd53i9o0kjms05bg6peei.apps.googleusercontent.com"
-           data-callback="handleCredentialResponse"
-           data-auto_prompt="false">
-      </div>
-      <div class="g_id_signin"
-           data-type="standard"
-           data-size="large"
-           data-theme="outline"
-           data-text="sign_in_with"
-           data-shape="rectangular"
-           data-logo_alignment="left">
-      </div>
-
-      <div id="login-status"></div>
-      <div class="login-footer">Construtora NODAN · Acesso administrativo</div>
-    </div>
-  </div>
-
-  <!-- CONTEÚDO DO APP -->
-  <div id="app" hidden></div>
-
-  <script>
-    "use strict";
-
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9-gjl5gL_vvt-NefL2NGhRSjh0RjEYHHsKKzDNFEaJJ4gMITTc1QTAGOfV7LDZD8/exec";
-    const LOGO = "Início_Images/1.Imagem.203651.png";
-
-    let currentUser = null;
-    let drivePhotos = { groups: {}, units: {} };
-
-    const groups = [
-      { id: 1, name: "Conjunto dos Jornalistas", cover: "Imóveis_Images/Entrada do Condomínio Jornalistas.png" },
-      { id: 2, name: "Tocantins", cover: "Imóveis_Images/Conjunto Residencial Tocantins Sob a Chuva.png" },
-      { id: 3, name: "Jonathas Pedrosa", cover: "Imóveis_Images/Jonathasfrente.jpg" },
-      { id: 4, name: "Cachoeirinha", cover: "Submenu_Images/13.Foto.171213.jpg" },
-      { id: 5, name: "Jardim Trentino", cover: "Imóveis_Images/Trentino.png" },
-      { id: 6, name: "Itapuranga 3", cover: "Imóveis_Images/Itapuranga3.png" }
-    ];
-
-    const units = [
-      { id: 1, groupId: 1, name: "Apartamento 312F", detail: "Jornalista 312F", photo: "Submenu_Images/1.Foto.143412.jpg", address: "Av. constantino Nery, 2503 - Chapada Manaus - 69050-082", iptu: "54244", water: "978604-0", energy: "0229862-7", ambar: "11618900298", rent: "R$ 1.660,00" },
-      { id: 2, groupId: 1, name: "Apartamento 308F", detail: "Jornalista 308F", photo: "Submenu_Images/2.Foto.173113.jpg", address: "Av. constantino Nery, 2503 - Chapada Manaus - 69050-082", iptu: "54241", water: "978485-3", energy: "0229851-1", ambar: "11617800210", rent: "R$ 1.600,00" },
-      { id: 3, groupId: 2, name: "Apartamento 108 A", detail: "Tocantins 103 8A", photo: "Submenu_Images/3.Foto.172806.jpg", address: "Av. constantino Nery, 2229 - Chapada Manaus - 69050-110", iptu: "53050", water: "1795651-0", energy: "0229724-8", ambar: "11605600200", rent: "R$ 1.400,00" },
-      { id: 4, groupId: 3, name: "JP Frente Baixo", detail: "JP Frente Baixo", photo: "Submenu_Images/4.Foto.173401.jpg", address: "Av. Jonathas Pedrosa, 142, - Centro - Manaus - 69020 - 427 C-3", iptu: "26850", water: "7372807-1", energy: "2220288-9", ambar: "122043900258", rent: "R$ 1.100,00" },
-      { id: 5, groupId: 3, name: "JP Frente Altos", detail: "JP Frente Altos", photo: "", address: "Av. Jonathas Pedrosa, 142, - Centro - Manaus - 69020 - 427 C-4", iptu: "26850", water: "7372796", energy: "23389940", ambar: "", rent: "R$ 1.000,00" },
-      { id: 6, groupId: 3, name: "JP Centro Altos", detail: "JP Centro Altos", photo: "Submenu_Images/6.Foto.173515.jpg", address: "Av. Jonathas Pedrosa, 142, - Centro - Manaus - 69020 - 427 C-2", iptu: "26850", water: "342920-2", energy: "275619-6", ambar: "15884600244", rent: "R$ 1.000,00" },
-      { id: 7, groupId: 3, name: "JP Traz Altos", detail: "JP Traz Altos", photo: "Submenu_Images/7.Foto.173724.jpg", address: "Av. Jonathas Pedrosa, 142, - Centro - Manaus - 69020 - 427", iptu: "26850", water: "7372793-8", energy: "275617-0", ambar: "15884400263", rent: "R$ 1.000,00" },
-      { id: 8, groupId: 3, name: "JP Taz Baixo", detail: "JP Taz Baixo", photo: "", address: "Av. Jonathas Pedrosa, 142, - Centro - Manaus - 69020 - 427 C-1", iptu: "26850", water: "7372802-0", energy: "275618-8", ambar: "15884500259", rent: "R$ 1.000,00" },
-      { id: 9, groupId: 4, name: "Cachoeirinha AP01", detail: "Cachoeirinha AP01", photo: "Submenu_Images/9.Foto.170209.jpg", address: "Av. Castelo Branco, 592, cachoeirinha - Manaus - 69065-010", iptu: "37281", water: "7364142-1", energy: "0318377-7", ambar: "19795800234", rent: "R$ 1.350,00" },
-      { id: 10, groupId: 4, name: "Cachoeirinha AP02", detail: "Cachoeirinha AP02", photo: "Submenu_Images/10.Foto.170907.jpg", address: "Av. Castelo Branco, 592, cachoeirinha - Manaus - 69065-010", iptu: "37281", water: "7363081-0", energy: "2574717-7", ambar: "156850300202", rent: "R$ 1.500,00" },
-      { id: 11, groupId: 4, name: "Cachoeirinha AP03", detail: "Cachoeirinha AP03", photo: "Submenu_Images/11.Foto.170952.jpg", address: "Av. Castelo Branco, 592, cachoeirinha - Manaus - 69065-010", iptu: "37281", water: "7393286-8", energy: "2574718-5", ambar: "156850400295", rent: "R$ 1.500,00" },
-      { id: 12, groupId: 4, name: "Cachoeirinha AP 04", detail: "Cachoeirinha AP 04", photo: "Submenu_Images/12.Foto.171116.jpg", address: "Av. Castelo Branco, 592, cachoeirinha - Manaus - 69065-010", iptu: "37281", water: "7364887-6", energy: "2574719-3", ambar: "156850500280", rent: "R$ 1.550,00" },
-      { id: 13, groupId: 4, name: "Cachoeirinha condomínio", detail: "Cachoeirinha condominio", photo: "Submenu_Images/13.Foto.171213.jpg", address: "Av. Castelo Branco, 592, cachoeirinha - Manaus - 69065-010", iptu: "37281", water: "194085-6", energy: "0318378-5", ambar: "19795900220", rent: "" },
-      { id: 14, groupId: 5, name: "Apartamento 304A", detail: "Trentino", photo: "", address: "Av. urucará, 321, cachoeirinha, apto 304A.", iptu: "2092078", water: "", energy: "2574716-9", ambar: "19734100285", rent: "" },
-      { id: 15, groupId: 6, name: "Casa M7", detail: "Itapuranga 3", photo: "Submenu_Images/15.Foto.143802.jpg", address: "Av. do Turismo, 1997, parque res. Itapuranga3, lote M7", iptu: "305899", water: "", energy: "2559722-1", ambar: "155377500226", rent: "" }
-    ];
-
-    const tenants = {
-      1: { name: "Josiane Otaviano Guilherme", cpf: "642.237.952-87", phone: "(97) 98453-7115", dueDay: "5", start: "2025-08-06", renewal: "2026-06-18", end: "2026-12-07" },
-      2: { name: "Lucimere Nunes dos Santos", cpf: "657.880.284-34", phone: "(92) 98233-9337", dueDay: "30", start: "2024-07-20", renewal: "2026-07-22", end: "2027-07-22" },
-      3: { name: "Francisca Evaldina de Carvalho Justino", cpf: "227.847.642-49", phone: "(92) 99484-8254", dueDay: "6", start: "2023-03-08", renewal: "2026-08-27", end: "2027-08-27" },
-      4: { name: "Maria de Fátima da Silva de Oliveira", cpf: "438.428.872-72", phone: "(92) 99147-5212", dueDay: "20", start: "2016-10-14", renewal: "", end: "" },
-      5: { name: "Jean Belem Leal", cpf: "030.992.462-63", phone: "(92) 99982-7511", dueDay: "2", start: "2022-12-16", renewal: "2024-12-16", end: "2025-12-16" },
-      6: { name: "Diana Araújo de Menezes", cpf: "965.330.722-34", phone: "(92) 9420-2041", dueDay: "15", start: "2025-09-30", renewal: "2026-09-30", end: "2027-09-30" },
-      7: { name: "Thiago Alexandre Queiroz de Vasconcelos", cpf: "528.388.972-68", phone: "(92) 98174-7501", dueDay: "5", start: "2024-03-04", renewal: "", end: "" },
-      8: { name: "João Bosco", cpf: "574.382.002-30", phone: "(97) 98444-3571", dueDay: "5", start: "2025-01-11", renewal: "", end: "" },
-      9: { name: "Raniery Costa do Nascimento", cpf: "022.803.322-56", phone: "(92) 99341-0637", dueDay: "5", start: "2025-04-04", renewal: "2026-04-04", end: "2027-04-04" },
-      10: { name: "Fábio Cunha Nojosa", cpf: "016.880.923-07", phone: "(21) 96524-9913", dueDay: "5", start: "2026-02-03", renewal: "", end: "2027-02-03" },
-      11: { name: "Darcimar Carvalho Otero", cpf: "475.051.682-15", phone: "(97) 9149-6010", dueDay: "5", start: "2026-08-11", renewal: "", end: "2027-08-11" },
-      12: { name: "Karla Katrina Oliveira dos Santos", cpf: "919.668.842-49", phone: "(92) 9415-8853", dueDay: "5", start: "2026-05-05", renewal: "", end: "2027-05-05" },
-      13: { name: "Condomínio" },
-      14: { name: "Imóvel próprio" },
-      15: { name: "Imóvel próprio" }
-    };
-
-    const driveDocs = {
-      1: "https://google.com", 2: "https://google.com", 3: "https://google.com", 4: "https://google.com",
-      5: "https://google.com", 6: "https://google.com", 7: "https://google.com", 8: "https://google.com",
-      9: "https://google.com", 10: "https://google.com", 11: "https://google.com", 12: "https://google.com"
-    };
-
-    const MONTHS = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    const MONTHS_SHORT = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-    const STORAGE_KEY_PAYMENTS = "NODAN_PAYMENTS_REGISTRY_V1";
-
-    function loadPayments() { try { const r = localStorage.getItem(STORAGE_KEY_PAYMENTS); return r ? JSON.parse(r) : []; } catch(e) { return []; } }
-    function savePayments(l) { try { localStorage.setItem(STORAGE_KEY_PAYMENTS, JSON.stringify(l)); } catch(e){} }
-    function syncWithDrive(p) {
-      const u = String(GOOGLE_SCRIPT_URL||"").trim();
-      if (u && u.startsWith("http")) {
-        fetch(u, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(p) }).catch(e => console.warn("Erro Drive:", e));
-      }
-    }
-
-    const app = document.getElementById("app");
-    const loginScreen = document.getElementById("login-screen");
-    const loginStatus = document.getElementById("login-status");
-
-    const state = { screen: "welcome", unitId: null, tab: "detalhes", query: "", groupFilter: "all", paymentYear: new Date().getFullYear(), paymentMonth: "all", saveMessage: "" };
-    let routeHistory = [{ ...state, __routeDepth: 0 }];
-    let historyEnabled = true;
-    try { history.replaceState(routeHistory[0], ""); } catch(e) { historyEnabled = false; }
-
-    function escapeHtml(v) { return String(v??"").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-    function normalize(v) { return String(v??"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); }
-
-    function icon(n, s=18) {
-      const p = {
-        building: '<path d="M4 21V5.5L12 2l8 3.5V21"/><path d="M2 21h20"/><path d="M9 21v-4h6v4"/><path d="M8 8h.01M12 8h.01M16 8h.01M8 12h.01M12 12h.01M16 12h.01"/>',
-        search: '<circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/>',
-        arrowRight: '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
-        arrowLeft: '<path d="M19 12H5"/><path d="m11 18-6-6 6-6"/>',
-        chevronRight: '<path d="m9 18 6-6-6-6"/>',
-        location: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
-        wallet: '<rect x="3" y="5" width="18" height="15" rx="2"/><path d="M3 9h18"/><path d="M16 14h2"/>',
-        droplet: '<path d="M12 22a7 7 0 0 0 7-7c0-4-7-13-7-13S5 11 5 15a7 7 0 0 0 7 7Z"/><path d="M9 16a3 3 0 0 0 3 3"/>',
-        bolt: '<path d="m13 2-3 9h7l-6 11 2-9H6l7-11Z"/>',
-        file: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
-        user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
-        calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
-        phone: '<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7l.4 2.7a2 2 0 0 1-.6 1.7L7.5 9.5a16 16 0 0 0 7 7l1.4-1.4a2 2 0 0 1 1.7-.6l2.7.4a2 2 0 0 1 1.7 2Z"/>',
-        external: '<path d="M14 3h7v7"/><path d="M10 14 21 3"/><path d="M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/>',
-        folder: '<path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M3 9h18"/>',
-        info: '<circle cx="12" cy="12" r="10"/><path d="M12 11v5M12 8h.01"/>',
-        shield: '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/>',
-        check: '<path d="M20 6 9 17l-5-5"/>',
-        cloud: '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
-        logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'
-      };
-      return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p[n]||p.building}</svg>`;
-    }
-
-    function logoMarkup() { return `<span class="logo-mark"><img src="${escapeHtml(LOGO)}" alt="NODAN" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="logo-fallback" hidden>NODAN</span></span>`; }
-    function getPhotoUrl(unitId, groupId, fallback) { return drivePhotos.units[String(unitId)] || drivePhotos.groups[String(groupId)] || fallback || ""; }
-    function photoMarkup(src, alt, extraClass="") {
-      const img = src ? `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" loading="lazy" onload="this.closest('.photo-frame').classList.add('is-loaded')" onerror="this.remove()">` : "";
-      return `<div class="photo-frame ${escapeHtml(extraClass)}"><div class="photo-fallback"><span class="fallback-icon">N</span><span class="fallback-label">${escapeHtml(alt)}</span><small>Imagem indisponível</small></div>${img}</div>`;
-    }
-
-    function getProperty(id) { const u = units.find(i=>i.id===Number(id)); return u ? { unit: u, group: groups.find(i=>i.id===u.groupId), tenant: tenants[u.id]||null, docs: driveDocs[u.id]||"" } : null; }
-    function formatDate(v) { if(!v) return "Não informado"; const p = v.split("-"); return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : v; }
-    function formatCurrency(n) { return Number(n||0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); }
-    function parseNumericRent(r) { if(!r) return ""; const v = parseFloat(r.replace(/[^\d,]/g,"").replace(",",".")); return isNaN(v) ? "" : v.toFixed(2); }
-    function getStatus(id) { return id<=12 ? {label:"Contrato cadastrado", kind:"contract"} : (id===13 ? {label:"Condomínio", kind:"condo"} : {label:"Imóvel próprio", kind:"owned"}); }
-
-    function infoField(label, value, wide=false) { return `<div class="info-field${wide?" wide":""}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value===""||value==null?"Não informado":value)}</strong></div>`; }
-    function meterItem(label, value, iconName) { return `<div class="meter-item"><span class="meter-icon">${icon(iconName,16)}</span><div><span>${escapeHtml(label)}</span><strong>${escapeHtml(value||"Não informado")}</strong></div></div>`; }
-    function getInitials(name) { return String(name||"").trim().split(/\s+/).slice(0,2).map(p=>p.charAt(0)).join("").toUpperCase(); }
-    function isAdmin() { return currentUser && currentUser.nivel === "admin"; }
-
-    function renderWelcome() {
-      return `<main class="welcome-screen"><header class="welcome-top"><div class="welcome-logo-box">${logoMarkup()}</div><div class="welcome-top-note">Portal de gestão imobiliária</div></header><section class="welcome-content"><div class="welcome-copy"><div class="welcome-kicker">Painel NODAN</div><h1>Seu patrimônio,<br><em>sob controle.</em></h1><p>Imóveis, informações de contratos, pagamentos e documentos organizados em um único lugar.</p><button class="welcome-cta" data-action="enter">Acessar imóveis ${icon("arrowRight",19)}</button><div class="welcome-caption">Uso administrativo · Visualização adaptada</div></div><div class="welcome-preview"><div class="preview-topline"><span>Visão geral</span><span>Carteira NODAN</span></div><div class="preview-stats"><div class="preview-stat"><strong>15</strong><span>unidades</span></div><div class="preview-stat"><strong>06</strong><span>empreendimentos</span></div><div class="preview-stat"><strong>12</strong><span>inquilinos</span></div></div><div class="preview-feature"><div class="preview-feature-icon">${icon("building",22)}</div><div><strong>Informação rápida</strong><span>Detalhes e histórico financeiro.</span></div></div></div></section><footer class="welcome-footer"><span>© Construtora NODAN</span><span>Ambiente protegido.</span></footer></main>`;
-    }
-
-    function renderShell(content) {
-      const isDetail = state.screen === "detail";
-      return `<div class="app-shell"><aside class="sidebar"><div class="sidebar-brand"><div class="sidebar-logo-box">${logoMarkup()}</div><div class="sidebar-brand-caption">Gestão patrimonial</div></div><div class="sidebar-section-label">Menu principal</div><button class="nav-item active" data-action="go-list">${icon("building",19)}<span>Imóveis</span><span class="nav-count">15</span></button><div class="sidebar-bottom"><div class="sidebar-user"><div class="sidebar-user-avatar">${escapeHtml(getInitials(currentUser?currentUser.nome:"?"))}</div><div class="sidebar-user-info"><strong>${escapeHtml(currentUser?currentUser.nome:"Usuário")}</strong><span>${escapeHtml(currentUser?(currentUser.nivel==="admin"?"Administrador":"Leitura"):"")}</span></div></div><button class="sidebar-logout" data-action="logout">${icon("logout",14)} Sair</button><div class="sidebar-copyright">NODAN · Imóveis</div></div></aside><main class="main-area"><header class="desktop-topbar"><div class="topbar-breadcrumb">NODAN <span class="topbar-separator">/</span> <strong>${escapeHtml(isDetail?"Ficha do imóvel":"Carteira")}</strong></div><div class="topbar-status"><span class="topbar-status-dot"></span> Google Drive Conectado</div></header><header class="mobile-bar"><div class="mobile-logo-box">${logoMarkup()}</div>${isDetail?`<button class="mobile-back" data-action="back">${icon("arrowLeft",15)} Voltar</button>`:`<span class="mobile-page-label">NODAN</span>`}</header><div class="content-wrap">${content}</div></main></div>`;
-    }
-
-    function renderList() {
-      const filterBtns = [`<button class="filter-chip" data-action="filter-group" data-group-filter="all">Todos <span>${units.length}</span></button>`, ...groups.map(g => `<button class="filter-chip" data-action="filter-group" data-group-filter="${g.id}">${escapeHtml(g.name)} <span>${units.filter(u=>u.groupId===g.id).length}</span></button>`)].join("");
-      const groupSections = groups.map(g => {
-        const gu = units.filter(u => u.groupId === g.id);
-        const cards = gu.map(u => {
-          const t = tenants[u.id];
-          const st = getStatus(u.id);
-          const searchText = normalize([u.name, u.detail, u.address, g.name, t ? t.name : ""].join(" "));
-          const photoUrl = getPhotoUrl(u.id, g.id, u.photo || g.cover);
-          return `<a class="unit-card" href="#imovel-${u.id}" data-action="open-unit" data-id="${u.id}" data-group="${g.id}" data-search="${escapeHtml(searchText)}">${photoMarkup(photoUrl, u.name, "unit-photo-frame")}<div class="unit-card-body"><div class="unit-card-topline"><span class="status-tag ${st.kind}">${escapeHtml(st.label)}</span><span class="unit-card-arrow">${icon("chevronRight",15)}</span></div><h3>${escapeHtml(u.name)}</h3><p class="unit-card-location">${escapeHtml(g.name)}</p><div class="unit-card-footer"><span>Aluguel</span><strong>${escapeHtml(u.rent||"Não informado")}</strong></div></div></a>`;
-        }).join("");
-        return `<section class="group-section" data-group-section="${g.id}"><div class="group-heading">${photoMarkup(drivePhotos.groups[String(g.id)]||g.cover, g.name, "group-photo-frame")}<div class="group-heading-copy"><div class="group-overline">Empreendimento ${String(g.id).padStart(2,"0")}</div><h2>${escapeHtml(g.name)}</h2><p>${gu.length} ${gu.length===1?"unidade":"unidades"}</p></div></div><div class="unit-grid">${cards}</div></section>`;
-      }).join("");
-
-      return `<section class="page-heading"><div><div class="eyebrow">Painel NODAN</div><h1>Imóveis</h1><p>Selecione uma unidade para consultar ou registrar lançamentos.</p></div></section><div class="list-tools"><label class="search-box" for="property-search">${icon("search",18)}<input id="property-search" type="search" placeholder="Buscar imóvel..." value="${escapeHtml(state.query)}" autocomplete="off"></label><div class="results-count" id="results-count">15 unidades</div></div><div class="filter-row">${filterBtns}</div><div id="property-groups">${groupSections}</div><div id="no-results" class="no-results" hidden>Nenhum imóvel encontrado.</div>`;
-    }
-
-    function renderDetailsPanel(p) {
-      const u = p.unit;
-      return `<div class="panel-grid"><section class="panel"><div class="panel-heading"><div class="panel-icon">${icon("location",19)}</div><div><h2>Identificação</h2><p>Dados cadastrados.</p></div></div><div class="info-field-grid">${infoField("Unidade",u.name)}${infoField("Detalhamento",u.detail)}${infoField("Empreendimento",p.group.name)}${infoField("Aluguel",u.rent)}${infoField("Endereço",u.address,true)}</div></section><section class="panel"><div class="panel-heading"><div class="panel-icon">${icon("wallet",19)}</div><div><h2>Medidores e IPTU</h2></div></div><div class="meters-grid">${meterItem("IPTU",u.iptu,"file")}${meterItem("Água",u.water,"droplet")}${meterItem("AM Energia",u.energy,"bolt")}${meterItem("Âmbar",u.ambar,"bolt")}</div></section></div>`;
-    }
-
-    function renderTenantPanel(p) {
-      const t = p.tenant;
-      if (!t || t.name === "Condomínio" || t.name === "Imóvel próprio") {
-        return `<section class="special-record"><div class="special-record-icon">${icon("building",25)}</div><h2>${escapeHtml(t?t.name:"Sem inquilino")}</h2><p>Esta unidade não possui contrato de inquilino ativo.</p></section>`;
-      }
-      return `<section class="panel tenant-panel"><div class="tenant-profile"><div class="tenant-avatar">${escapeHtml(getInitials(t.name))}</div><div><div class="eyebrow">Inquilino</div><h2>${escapeHtml(t.name)}</h2><p>${escapeHtml(p.unit.name)}</p></div></div><div class="tenant-fields">${infoField("CPF",t.cpf)}${infoField("Telefone",t.phone)}${infoField("Vencimento",t.dueDay?`Dia ${t.dueDay}`:"")}${infoField("Início",formatDate(t.start))}${infoField("Renovação",formatDate(t.renewal))}${infoField("Término",formatDate(t.end))}</div></section>`;
-    }
-
-    function renderDocumentsPanel(p) {
-      return p.docs ? `<section class="documents-panel"><div class="document-card"><div class="document-icon">${icon("folder",25)}</div><div class="document-copy"><h2>Documentos de ${escapeHtml(p.unit.name)}</h2><p>Acesse a pasta no Google Drive.</p></div><a class="primary-button" href="${escapeHtml(p.docs)}" target="_blank" rel="noopener noreferrer">Abrir pasta ${icon("external",15)}</a></div></section>` : `<section class="empty-documents"><h2>Sem documentos</h2></section>`;
-    }
-
-    function renderPaymentsPanel(p) {
-      if (p.unit.id > 12) return `<section class="special-record"><h2>Patrimônio próprio / Condomínio</h2><p>Sem lançamentos para esta categoria.</p></section>`;
-
-      const allP = loadPayments();
-      const uP = allP.filter(item => item.unitId === p.unit.id);
-      const cY = new Date().getFullYear();
-      const aY = Number(state.paymentYear);
-      const aM = state.paymentMonth;
-
-      const yP = uP.filter(item => Number(item.refYear) === aY);
-      const totalAmount = yP.reduce((acc, item) => acc + Number(item.amount||0), 0);
-      const filteredP = aM === "all" ? yP : yP.filter(item => Number(item.refMonth) === Number(aM));
-
-      const monthChips = [`<button class="month-chip${aM==="all"?" active":""}" data-action="filter-payment-month" data-month="all">Todos</button>`, ...MONTHS_SHORT.map((s,i)=>{
-        const m = i+1; const hasP = yP.some(item => Number(item.refMonth)===m);
-        return `<button class="month-chip${String(aM)===String(m)?" active":""}${hasP?" has-payment":""}" data-action="filter-payment-month" data-month="${m}">${hasP?'<span class="month-chip-badge"></span>':""}${s}</button>`;
-      })].join("");
-
-      const rowsHtml = filteredP.length === 0
-        ? `<tr><td colspan="5" class="empty-report">Nenhum pagamento encontrado.</td></tr>`
-        : filteredP.map(item => `<tr><td><strong>${escapeHtml(formatDate(item.paymentDate))}</strong></td><td><span class="table-badge-month">${escapeHtml(MONTHS[Number(item.refMonth)-1])}/${item.refYear}</span></td><td class="table-amount">${escapeHtml(formatCurrency(item.amount))}</td><td>${escapeHtml(item.notes||"—")}</td><td style="text-align:right">${isAdmin()?`<button class="table-delete-btn" data-action="delete-payment" data-id="${item.id}">Excluir</button>`:""}</td></tr>`).join("");
-
-      const formHtml = isAdmin() ? `
-        <section class="payment-form-card">
-          <div class="panel-heading"><div class="panel-icon green">${icon("wallet",20)}</div><div><h2>Registrar Pagamento</h2></div></div>
-          <form id="payment-form">
-            <div class="form-grid">
-              <div class="form-group"><label>Data</label><input type="date" name="paymentDate" value="${new Date().toISOString().split("T")[0]}" required></div>
-              <div class="form-group"><label>Mês Ref.</label><select name="refMonth">${MONTHS.map((m,i)=>`<option value="${i+1}" ${i===new Date().getMonth()?"selected":""}>${m}</option>`).join("")}</select></div>
-              <div class="form-group"><label>Ano Ref.</label><select name="refYear"><option value="${cY}">${cY}</option><option value="${cY-1}">${cY-1}</option></select></div>
-              <div class="form-group"><label>Valor (R$)</label><input type="number" step="0.01" name="amount" value="${parseNumericRent(p.unit.rent)}" required></div>
-              <div class="form-group" style="grid-column: 1 / -1"><label>Observação</label><input type="text" name="notes" placeholder="Ex: Pix"></div>
+    <!-- OVERLAY DE LOGIN -->
+    <div id="login-overlay">
+        <div class="login-card">
+            <h2>Acesso Nodan</h2>
+            <p>Faça login com sua conta institucional do Google para acessar a plataforma.</p>
+            
+            <div id="g_id_onload"
+                 data-client_id="56923831884-rkm9qeor23tmd53i9o0kjms05bg6peei.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
             </div>
-            <div class="form-actions"><button type="submit" class="primary-button gold">${icon("check",16)} Registrar Pagamento</button><div id="payment-save-status">${state.saveMessage?`<span class="save-feedback">${escapeHtml(state.saveMessage)}</span>`:""}</div></div>
-          </form>
-        </section>` : `<section class="special-record"><h2>Modo Leitura</h2><p>Lançamentos restritos a administradores.</p></section>`;
+            
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+        </div>
+    </div>
 
-      return `<div class="payments-wrapper">${formHtml}<section class="report-card"><div class="report-topline"><h2>Histórico ${aY}</h2></div><div class="report-stats-grid"><div class="report-stat-box"><span>Total</span><strong class="green">${formatCurrency(totalAmount)}</strong></div></div><div class="month-filter-bar">${monthChips}</div><div style="overflow-x:auto"><table class="payments-table"><thead><tr><th>Data</th><th>Mês Ref.</th><th>Valor</th><th>Obs</th><th style="text-align:right">Ações</th></tr></thead><tbody>${rowsHtml}</tbody></table></div></section></div>`;
-    }
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="brand-container">
+            <div class="brand-title">CONSTRUTORA NODAN</div>
+        </div>
+        <div class="user-panel hidden" id="user-panel">
+            <div class="user-info">
+                <div class="user-name" id="user-display-name">Carregando...</div>
+                <div class="user-role" id="user-display-role">...</div>
+            </div>
+            <button class="btn-logout" onclick="logout()">Sair</button>
+        </div>
+    </header>
 
-    function renderPropertyDetail(p) {
-      let tabContent = renderDetailsPanel(p);
-      if (state.tab === "inquilino") tabContent = renderTenantPanel(p);
-      if (state.tab === "documentos") tabContent = renderDocumentsPanel(p);
-      if (state.tab === "pagamentos") tabContent = renderPaymentsPanel(p);
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main>
 
-      const tabs = [{id:"detalhes",label:"Detalhes",icon:"building"},{id:"inquilino",label:"Inquilino",icon:"user"},{id:"documentos",label:"Documentos",icon:"file"},{id:"pagamentos",label:"Pagamentos",icon:"wallet"}];
-      return `<section class="detail-view"><div class="detail-heading"><div><h1>${escapeHtml(p.unit.name)}</h1><p>${escapeHtml(p.group.name)}</p></div><button class="back-link" data-action="back">${icon("arrowLeft",16)} Voltar</button></div><div class="detail-cover">${photoMarkup(getPhotoUrl(p.unit.id, p.unit.groupId, p.unit.photo||p.group.cover), p.unit.name, "detail-photo-frame")}</div><div class="tabs-wrap"><div class="tab-bar">${tabs.map(t=>`<button class="tab-button${state.tab===t.id?" active":""}" data-action="change-tab" data-tab="${t.id}">${icon(t.icon,17)}<span>${t.label}</span></button>`).join("")}</div></div><div>${tabContent}</div></section>`;
-    }
+        <!-- SEÇÃO DE FOTOS / CARDS DOS IMÓVEIS (SUBMENU) -->
+        <h2 class="section-title">Nossos Imóveis & Empreendimentos</h2>
+        <div class="cards-grid" id="submenu-cards-container">
+            <!-- Cards serão injetados via JavaScript -->
+            <p style="color: var(--text-muted);">Carregando fotos dos imóveis...</p>
+        </div>
 
-    function render() {
-      if (state.screen === "welcome") { app.innerHTML = renderWelcome(); return; }
-      if (state.screen === "detail") {
-        const p = getProperty(state.unitId);
-        if (!p) { state.screen = "list"; render(); return; }
-        app.innerHTML = renderShell(renderPropertyDetail(p));
-        return;
-      }
-      app.innerHTML = renderShell(renderList());
-      applyFilters();
-    }
+        <!-- FORMULÁRIO DE NOVO PAGAMENTO (APENAS ADMIN) -->
+        <div class="form-section hidden" id="admin-form-section">
+            <h2 class="section-title">Novo Pagamento / Lançamento</h2>
+            <form id="payment-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="p-data">Data</label>
+                        <input type="date" id="p-data" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="p-desc">Descrição</label>
+                        <input type="text" id="p-desc" placeholder="Ex: Material de Construção" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="p-categoria">Categoria</label>
+                        <input type="text" id="p-categoria" placeholder="Ex: Obras" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="p-grupo">Grupo</label>
+                        <input type="text" id="p-grupo" placeholder="Ex: Residencial X">
+                    </div>
+                    <div class="form-group">
+                        <label for="p-imovel">Imóvel/Apto</label>
+                        <input type="text" id="p-imovel" placeholder="Ex: Apto 101">
+                    </div>
+                    <div class="form-group">
+                        <label for="p-valor">Valor (R$)</label>
+                        <input type="number" step="0.01" id="p-valor" placeholder="0.00" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="btn-save-payment">Cadastrar Pagamento</button>
+            </form>
+        </div>
 
-    function navigate(ns) { Object.assign(state, ns); render(); window.scrollTo(0, 0); }
+        <!-- LISTA / TABELA DE PAGAMENTOS -->
+        <h2 class="section-title">Registros Financeiros</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Grupo</th>
+                        <th>Imóvel</th>
+                        <th>Valor (R$)</th>
+                        <th class="admin-only-col hidden">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="payments-tbody">
+                    <tr><td colspan="7" style="text-align: center;">Carregando pagamentos...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
-    function applyFilters() {
-      const query = normalize(state.query);
-      let count = 0;
-      document.querySelectorAll(".unit-card").forEach(card => {
-        const matchesGroup = state.groupFilter === "all" || card.dataset.group === String(state.groupFilter);
-        const matchesQuery = !query || (card.dataset.search || "").includes(query);
-        const visible = matchesGroup && matchesQuery;
-        card.hidden = !visible;
-        if (visible) count++;
-      });
-      const cnt = document.getElementById("results-count");
-      if (cnt) cnt.textContent = `${count} unidades`;
-    }
+    </main>
 
-    // Ações de Eventos
-    app.addEventListener("click", e => {
-      const c = e.target.closest("[data-action]");
-      if (!c) return;
-      const a = c.dataset.action;
-      if (a === "enter" || a === "go-list") navigate({ screen: "list", unitId: null, tab: "detalhes" });
-      if (a === "back") navigate({ screen: "list", unitId: null });
-      if (a === "open-unit") { e.preventDefault(); navigate({ screen: "detail", unitId: Number(c.dataset.id), tab: "detalhes" }); }
-      if (a === "change-tab") { state.tab = c.dataset.tab; render(); }
-      if (a === "filter-group") { state.groupFilter = c.dataset.groupFilter; applyFilters(); }
-      if (a === "filter-payment-month") { state.paymentMonth = c.dataset.month; render(); }
-      if (a === "logout") {
-        currentUser = null;
-        localStorage.removeItem("NODAN_SESSION");
-        loginScreen.hidden = false;
-        app.hidden = true;
-      }
-      if (a === "delete-payment") {
-        if (confirm("Excluir este lançamento?")) {
-          const id = c.dataset.id;
-          savePayments(loadPayments().filter(p => p.id !== id));
-          syncWithDrive({ action: "delete", id: id });
-          render();
-        }
-      }
-    });
+    <footer>
+        <p>&copy; Construtora Nodan - Todos os direitos reservados.</p>
+    </footer>
 
-    app.addEventListener("input", e => { if (e.target.id === "property-search") { state.query = e.target.value; applyFilters(); } });
+    <script>
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9-gjl5gL_vvt-NefL2NGhRSjh0RjEYHHsKKzDNFEaJJ4gMITTc1QTAGOfV7LDZD8/exec";
+        const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&auto=format&fit=crop";
 
-    app.addEventListener("submit", e => {
-      if (e.target.id === "payment-form") {
-        e.preventDefault();
-        const p = getProperty(state.unitId);
-        if (!p) return;
-        const f = e.target;
-        const np = {
-          id: "PAY_" + Date.now(),
-          unitId: p.unit.id,
-          unitName: p.unit.name,
-          tenantName: p.tenant ? p.tenant.name : "Não informado",
-          paymentDate: f.paymentDate.value,
-          refMonth: Number(f.refMonth.value),
-          refYear: Number(f.refYear.value),
-          amount: parseFloat(f.amount.value) || 0,
-          notes: f.notes.value.trim(),
-          action: "create"
-        };
-        const list = loadPayments();
-        list.push(np);
-        savePayments(list);
-        syncWithDrive(np);
-        state.saveMessage = "Pagamento gravado com sucesso!";
-        render();
-      }
-    });
+        let currentUser = null;
 
-    // SISTEMA DE AUTENTICAÇÃO COM GOOGLE
-    function parseJwt(token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-        return JSON.parse(jsonPayload);
-      } catch(e) { return null; }
-    }
-
-    window.handleCredentialResponse = function(response) {
-      const payload = parseJwt(response.credential);
-      if (!payload || !payload.email) {
-        loginStatus.innerHTML = '<div class="login-error">Erro ao ler credenciais do Google.</div>';
-        return;
-      }
-      const email = payload.email.trim().toLowerCase();
-      loginStatus.innerHTML = '<div class="login-loading">Autenticando na planilha...</div>';
-
-      fetch(`${GOOGLE_SCRIPT_URL}?action=login&email=${encodeURIComponent(email)}`)
-        .then(r => r.json())
-        .then(d => {
-          if (d && d.status === "ok") {
-            currentUser = { email: email, nome: d.nome, nivel: d.nivel };
-            localStorage.setItem("NODAN_SESSION", JSON.stringify(currentUser));
-            loginScreen.hidden = true;
-            app.hidden = false;
-            render();
-            // Carrega fotos do drive em segundo plano
-            fetch(`${GOOGLE_SCRIPT_URL}?action=photos`).then(r=>r.json()).then(p=>{ if(p&&p.photos){ drivePhotos=p.photos; render(); } }).catch(()=>{});
-          } else {
-            loginStatus.innerHTML = `<div class="login-error">E-mail não autorizado: <strong>${escapeHtml(email)}</strong></div>`;
-          }
-        })
-        .catch(err => {
-          loginStatus.innerHTML = '<div class="login-error">Falha ao conectar no servidor. Tente novamente.</div>';
+        // Inicialização ao carregar a página
+        window.addEventListener('DOMContentLoaded', () => {
+            checkSession();
+            loadSubmenuPhotos();
+            loadPagamentos();
         });
-    };
 
-    // Auto-login se sessão salva existir
-    (function checkSession() {
-      const saved = localStorage.getItem("NODAN_SESSION");
-      if (saved) {
-        try {
-          const session = JSON.parse(saved);
-          if (session && session.email && session.nivel) {
-            currentUser = session;
-            loginScreen.hidden = true;
-            app.hidden = false;
-            render();
-            fetch(`${GOOGLE_SCRIPT_URL}?action=photos`).then(r=>r.json()).then(p=>{ if(p&&p.photos){ drivePhotos=p.photos; render(); } }).catch(()=>{});
-          }
-        } catch(e) {}
-      }
-    })();
-  </script>
+        // Função de Callback do Login do Google
+        function handleCredentialResponse(response) {
+            try {
+                const responsePayload = parseJwt(response.credential);
+                const userEmail = responsePayload.email;
+
+                // Valida na planilha via Apps Script
+                fetch(`${GOOGLE_SCRIPT_URL}?action=login&email=${encodeURIComponent(userEmail)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.authorized) {
+                            currentUser = {
+                                email: data.email,
+                                nome: data.nome,
+                                nivel: data.nivel
+                            };
+                            localStorage.setItem('NODAN_SESSION', JSON.stringify(currentUser));
+                            applyUserPermissions();
+                        } else {
+                            alert("Acesso negado: Este e-mail não possui permissão para acessar o sistema.");
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Erro na autenticação:", err);
+                        alert("Erro ao validar acesso. Tente novamente.");
+                    });
+            } catch (err) {
+                console.error("Erro no processamento da credencial:", err);
+            }
+        }
+
+        function parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function checkSession() {
+            const savedSession = localStorage.getItem('NODAN_SESSION');
+            if (savedSession) {
+                try {
+                    currentUser = JSON.parse(savedSession);
+                    applyUserPermissions();
+                } catch(e) {
+                    localStorage.removeItem('NODAN_SESSION');
+                }
+            }
+        }
+
+        function applyUserPermissions() {
+            if (!currentUser) return;
+
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('user-panel').classList.remove('hidden');
+            document.getElementById('user-display-name').textContent = currentUser.nome;
+            
+            const roleBadge = document.getElementById('user-display-role');
+            roleBadge.textContent = currentUser.nivel.toUpperCase();
+            roleBadge.className = 'user-role ' + (currentUser.nivel === 'admin' ? 'badge-admin' : 'badge-leitura');
+
+            if (currentUser.nivel === 'admin') {
+                document.getElementById('admin-form-section').classList.remove('hidden');
+                document.querySelectorAll('.admin-only-col').forEach(el => el.classList.remove('hidden'));
+            } else {
+                document.getElementById('admin-form-section').classList.add('hidden');
+                document.querySelectorAll('.admin-only-col').forEach(el => el.classList.add('hidden'));
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('NODAN_SESSION');
+            currentUser = null;
+            location.reload();
+        }
+
+        // CARREGAR FOTOS DA ABA SUBMENU
+        function loadSubmenuPhotos() {
+            const container = document.getElementById('submenu-cards-container');
+            
+            fetch(`${GOOGLE_SCRIPT_URL}?action=submenu`)
+                .then(res => res.json())
+                .then(items => {
+                    if (!items || items.length === 0) {
+                        container.innerHTML = `<p style="color: var(--text-muted);">Nenhum imóvel cadastrado no momento.</p>`;
+                        return;
+                    }
+
+                    container.innerHTML = items.map(item => {
+                        const imgSrc = item.foto && item.foto.trim() !== '' ? item.foto : DEFAULT_IMAGE;
+                        const title = item.detalhes || `Imóvel ID ${item.id}`;
+                        
+                        return `
+                            <div class="property-card">
+                                <div class="card-img-container">
+                                    <img src="${imgSrc}" alt="${title}" onerror="this.src='${DEFAULT_IMAGE}'">
+                                </div>
+                                <div class="card-body">
+                                    <div class="card-title">${title}</div>
+                                    <div class="card-desc">Cód: ${item.id} ${item.idMenu ? '| Grupo: ' + item.idMenu : ''}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                })
+                .catch(err => {
+                    console.error("Erro ao carregar submenu:", err);
+                    container.innerHTML = `<p style="color: var(--danger);">Não foi possível carregar as fotos dos imóveis.</p>`;
+                });
+        }
+
+        // CARREGAR TABELA DE PAGAMENTOS
+        function loadPagamentos() {
+            const tbody = document.getElementById('payments-tbody');
+
+            fetch(GOOGLE_SCRIPT_URL)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Nenhum pagamento registrado.</td></tr>`;
+                        return;
+                    }
+
+                    const isAdmin = currentUser && currentUser.nivel === 'admin';
+
+                    tbody.innerHTML = data.map(p => `
+                        <tr>
+                            <td>${formatDate(p.data)}</td>
+                            <td><strong>${p.descricao || '-'}</strong></td>
+                            <td>${p.categoria || '-'}</td>
+                            <td>${p.grupo || '-'}</td>
+                            <td>${p.imovel || '-'}</td>
+                            <td style="color: var(--danger); font-weight: 600;">R$ ${parseFloat(p.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                            <td class="admin-only-col ${isAdmin ? '' : 'hidden'}">
+                                <button class="btn-delete" onclick="deletePayment('${p.id}')">Excluir</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(err => {
+                    console.error("Erro ao buscar pagamentos:", err);
+                    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--danger);">Erro ao carregar dados.</td></tr>`;
+                });
+        }
+
+        // SUBMETER NOVO PAGAMENTO
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            if (!currentUser || currentUser.nivel !== 'admin') {
+                alert("Apenas administradores podem cadastrar pagamentos.");
+                return;
+            }
+
+            const btn = document.getElementById('btn-save-payment');
+            btn.disabled = true;
+            btn.textContent = "Salvando...";
+
+            const payload = {
+                id: new Date().getTime().toString(),
+                data: document.getElementById('p-data').value,
+                descricao: document.getElementById('p-desc').value,
+                categoria: document.getElementById('p-categoria').value,
+                grupo: document.getElementById('p-grupo').value,
+                imovel: document.getElementById('p-imovel').value,
+                valor: parseFloat(document.getElementById('p-valor').value) || 0
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(resData => {
+                btn.disabled = false;
+                btn.textContent = "Cadastrar Pagamento";
+                if (resData.status === 'success') {
+                    document.getElementById('payment-form').reset();
+                    loadPagamentos();
+                } else {
+                    alert("Erro ao salvar: " + (resData.message || "Erro desconhecido"));
+                }
+            })
+            .catch(err => {
+                btn.disabled = false;
+                btn.textContent = "Cadastrar Pagamento";
+                console.error("Erro ao enviar pagamento:", err);
+                alert("Erro ao tentar salvar pagamento.");
+            });
+        }
+
+        // EXCLUIR PAGAMENTO
+        function deletePayment(id) {
+            if (!currentUser || currentUser.nivel !== 'admin') return;
+            if (!confirm("Tem certeza de que deseja excluir este pagamento?")) return;
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'delete', id: id })
+            })
+            .then(res => res.json())
+            .then(resData => {
+                if (resData.status === 'success') {
+                    loadPagamentos();
+                } else {
+                    alert("Erro ao excluir: " + (resData.message || "Erro desconhecido"));
+                }
+            })
+            .catch(err => {
+                console.error("Erro ao excluir pagamento:", err);
+                alert("Erro na tentativa de exclusão.");
+            });
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const d = new Date(dateStr);
+            if (isNaN(d.getTime())) return dateStr;
+            return d.toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+        }
+    </script>
 </body>
 </html>
-```
