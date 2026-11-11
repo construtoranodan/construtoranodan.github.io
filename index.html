@@ -938,23 +938,34 @@
         }
     }
 
-    function handleCredentialResponse(response) {
-        try {
-            const responsePayload = parseJwt(response.credential);
-            const userEmail = responsePayload.email;
+   function handleCredentialResponse(response) {
+    const responsePayload = decodeJwtResponse(response.credential);
+    const email = responsePayload.email;
 
-            fetch(`${GOOGLE_SCRIPT_URL}?action=login&email=${encodeURIComponent(userEmail)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.authorized) {
-                        currentUser = data;
-                        localStorage.setItem('NODAN_SESSION', JSON.stringify(currentUser));
-                        document.getElementById('login-overlay').classList.add('hidden');
-                        loadDataFromGoogle(); // BAIXA FOTOS E PAGAMENTOS
-                    } else {
-                        alert("Acesso negado: Este e-mail não possui permissão para acessar o sistema.");
-                    }
-                });
+    fetch(SCRIPT_URL + "?action=login&email=" + encodeURIComponent(email))
+        .then(r => r.json())
+        .then(data => {
+            console.log("Resposta do Servidor:", data); 
+            if (data.authorized) {
+                const sessionData = {
+                    authorized: true,
+                    email: email,
+                    nome: data.nome,
+                    nivel: data.nivel,
+                    timestamp: new Date().getTime()
+                };
+                localStorage.setItem('NODAN_SESSION', JSON.stringify(sessionData));
+                checkAuth();
+            } else {
+                alert("Acesso negado para o e-mail: " + email);
+                console.error("Detalhes do erro:", data);
+            }
+        })
+        .catch(error => {
+            console.error("Erro na comunicação:", error);
+            alert("Erro ao conectar com o servidor.");
+        });
+});
         } catch (err) {
             console.error(err);
         }
