@@ -948,20 +948,27 @@ function handleCredentialResponse(response) {
         .then(r => r.json())
         .then(data => {
             console.log("Resposta do Servidor:", data); 
-            if (data.authorized) {
+            
+            // Aceita "authorized" ou "ok" retornado pela planilha
+            if (data.authorized || data.ok) {
                 const sessionData = {
                     authorized: true,
                     email: email,
-                    nome: data.nome,
-                    nivel: data.nivel,
+                    nome: data.nome || "Usuário",
+                    nivel: data.nivel || "leitura",
                     timestamp: new Date().getTime()
                 };
                 localStorage.setItem('NODAN_SESSION', JSON.stringify(sessionData));
                 
-                document.getElementById('login-overlay').classList.add('hidden');
+                // Esconde a tela azul de login
+                const overlay = document.getElementById('login-overlay');
+                if (overlay) overlay.classList.add('hidden');
                 
+                // Carrega as fotos e os dados da planilha
                 if (typeof loadDataFromGoogle === 'function') {
                     loadDataFromGoogle();
+                } else if (typeof render === 'function') {
+                    render();
                 }
             } else {
                 alert("Acesso negado para o e-mail: " + email);
