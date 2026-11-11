@@ -6,115 +6,121 @@
     <title>Construtora Nodan - Gestão Financeira</title>
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <!-- Chart.js para Gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #1e3a8a;
-            --primary-dark: #0f172a;
-            --secondary: #0284c7;
-            --accent: #f59e0b;
-            --bg-light: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --danger: #ef4444;
-            --success: #10b981;
+            --primary-blue: #0f2b5c;
+            --secondary-blue: #1d4ed8;
+            --accent-blue: #2563eb;
+            --light-blue: #eff6ff;
+            --card-shadow: 0 10px 15px -3px rgba(15, 43, 92, 0.1), 0 4px 6px -2px rgba(15, 43, 92, 0.05);
+            --bg-body: #f1f5f9;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --border-color: #cbd5e1;
+            --danger: #dc2626;
+            --success: #16a34a;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--bg-light);
-            color: var(--text-main);
+            background-color: var(--bg-body);
+            color: var(--text-dark);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* HEADER */
+        /* HEADER AZUL */
         header {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            color: white;
-            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #0a192f 0%, #0f2b5c 100%);
+            color: #ffffff;
+            padding: 1.25rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-bottom: 3px solid #2563eb;
         }
 
         .brand-container {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
+        }
+
+        .brand-container i {
+            font-size: 1.8rem;
+            color: #60a5fa;
         }
 
         .brand-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #ffffff;
+            text-transform: uppercase;
         }
 
         .user-panel {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.25rem;
         }
 
         .user-info {
             text-align: right;
-            font-size: 0.9rem;
         }
 
         .user-name {
-            font-weight: 600;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffffff;
         }
 
         .user-role {
             font-size: 0.75rem;
-            padding: 0.15rem 0.5rem;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.2);
-            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            text-transform: uppercase;
+            font-weight: 700;
             margin-top: 2px;
+            display: inline-block;
         }
 
+        .badge-admin { background-color: #2563eb; color: #ffffff; }
+        .badge-leitura { background-color: #f59e0b; color: #ffffff; }
+
         .btn-logout {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.4);
-            color: white;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 0.85rem;
-            transition: all 0.2s;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
         .btn-logout:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.25);
+            border-color: #ffffff;
         }
 
-        /* MAIN CONTAINER */
-        main {
-            flex: 1;
-            max-width: 1400px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-        }
-
-        /* LOGIN OVERLAY */
+        /* OVERLAY DE LOGIN */
         #login-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(10, 25, 47, 0.92);
+            backdrop-filter: blur(6px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -122,60 +128,87 @@
         }
 
         .login-card {
-            background: white;
-            padding: 2.5rem;
+            background: #ffffff;
+            padding: 3rem 2.5rem;
             border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.35);
             text-align: center;
-            max-width: 400px;
+            max-width: 420px;
             width: 90%;
+            border-top: 6px solid var(--secondary-blue);
         }
 
         .login-card h2 {
-            color: var(--primary-dark);
+            color: var(--primary-blue);
+            font-size: 1.8rem;
             margin-bottom: 0.5rem;
+            font-weight: 800;
         }
 
         .login-card p {
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
         }
 
-        /* CARDS DE IMÓVEIS / GRUPOS */
+        .section-header i {
+            font-size: 1.4rem;
+            color: var(--secondary-blue);
+        }
+
         .section-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--primary-dark);
-            margin-bottom: 1rem;
-            border-bottom: 2px solid var(--border);
-            padding-bottom: 0.5rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-blue);
         }
 
+        /* GRID DE CARDS DOS IMÓVEIS */
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.75rem;
+            margin-bottom: 3rem;
         }
 
         .property-card {
-            background: var(--card-bg);
-            border-radius: 12px;
+            background: #ffffff;
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .property-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transform: translateY(-6px);
+            box-shadow: 0 20px 25px -5px rgba(15, 43, 92, 0.15);
+            border-color: var(--accent-blue);
         }
 
         .card-img-container {
             width: 100%;
-            height: 180px;
+            height: 190px;
             background-color: #cbd5e1;
             position: relative;
             overflow: hidden;
@@ -185,148 +218,170 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .property-card:hover .card-img-container img {
+            transform: scale(1.05);
         }
 
         .card-body {
-            padding: 1.2rem;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            background: #ffffff;
         }
 
         .card-title {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: var(--primary-dark);
-            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--primary-blue);
         }
 
         .card-desc {
             font-size: 0.85rem;
             color: var(--text-muted);
+            font-weight: 500;
         }
 
         /* FORMULÁRIO DE NOVO PAGAMENTO */
         .form-section {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            margin-bottom: 2.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 3rem;
+            box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--secondary-blue);
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.25rem;
+            margin-top: 1.25rem;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.5rem;
         }
 
         .form-group label {
             font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-main);
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .form-group input, .form-group select {
-            padding: 0.6rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 0.9rem;
+            padding: 0.75rem 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
             outline: none;
+            transition: border-color 0.2s;
+            background-color: #f8fafc;
         }
 
         .form-group input:focus, .form-group select:focus {
-            border-color: var(--secondary);
+            border-color: var(--secondary-blue);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
         .btn-submit {
-            background: var(--primary);
-            color: white;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+            color: #ffffff;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-weight: 600;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
-            margin-top: 1rem;
-            transition: background 0.2s;
+            margin-top: 1.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-submit:hover {
-            background: var(--primary-dark);
+            opacity: 0.95;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 10px -1px rgba(37, 99, 235, 0.4);
         }
 
         /* TABELA DE PAGAMENTOS */
         .table-container {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            background: #ffffff;
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
             overflow-x: auto;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: var(--card-shadow);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         th {
-            background: #f1f5f9;
-            color: var(--text-muted);
-            font-weight: 600;
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid var(--border);
+            background: #0f2b5c;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 1rem 1.25rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
         }
 
         td {
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f1f5f9;
+            color: var(--text-dark);
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        tr:nth-child(even) {
+            background-color: #f8fafc;
         }
 
-        .badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
+        tr:hover {
+            background-color: #eff6ff;
         }
-
-        .badge-admin { background: #dbeafe; color: #1e40af; }
-        .badge-leitura { background: #fef3c7; color: #92400e; }
 
         .btn-delete {
-            background: #fee2e2;
+            background: #fef2f2;
             color: var(--danger);
-            border: none;
-            padding: 0.4rem 0.6rem;
-            border-radius: 4px;
+            border: 1px solid #fecaca;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
+            transition: all 0.2s;
         }
 
         .btn-delete:hover {
-            background: #fca5a5;
+            background: var(--danger);
+            color: #ffffff;
         }
 
         /* FOOTER */
         footer {
             text-align: center;
-            padding: 1.5rem;
+            padding: 2rem;
             color: var(--text-muted);
-            font-size: 0.85rem;
-            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
             margin-top: auto;
-            background: white;
+            background: #ffffff;
         }
 
         .hidden { display: none !important; }
@@ -337,8 +392,8 @@
     <!-- OVERLAY DE LOGIN -->
     <div id="login-overlay">
         <div class="login-card">
-            <h2>Acesso Nodan</h2>
-            <p>Faça login com sua conta institucional do Google para acessar a plataforma.</p>
+            <h2>CONSTRUTORA NODAN</h2>
+            <p>Faça login com sua conta corporativa para acessar a gestão financeira e imóveis.</p>
             
             <div id="g_id_onload"
                  data-client_id="56923831884-rkm9qeor23tmd53i9o0kjms05bg6peei.apps.googleusercontent.com"
@@ -360,6 +415,7 @@
     <!-- CABEÇALHO -->
     <header>
         <div class="brand-container">
+            <i class="fa-solid fa-building"></i>
             <div class="brand-title">CONSTRUTORA NODAN</div>
         </div>
         <div class="user-panel hidden" id="user-panel">
@@ -367,23 +423,28 @@
                 <div class="user-name" id="user-display-name">Carregando...</div>
                 <div class="user-role" id="user-display-role">...</div>
             </div>
-            <button class="btn-logout" onclick="logout()">Sair</button>
+            <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
         </div>
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <main>
 
-        <!-- SEÇÃO DE FOTOS / CARDS DOS IMÓVEIS (SUBMENU) -->
-        <h2 class="section-title">Nossos Imóveis & Empreendimentos</h2>
+        <!-- SEÇÃO DE FOTOS DO SUBMENU -->
+        <div class="section-header">
+            <i class="fa-solid fa-city"></i>
+            <h2 class="section-title">Nossos Imóveis & Empreendimentos</h2>
+        </div>
         <div class="cards-grid" id="submenu-cards-container">
-            <!-- Cards serão injetados via JavaScript -->
-            <p style="color: var(--text-muted);">Carregando fotos dos imóveis...</p>
+            <p style="color: var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Carregando fotos dos imóveis...</p>
         </div>
 
-        <!-- FORMULÁRIO DE NOVO PAGAMENTO (APENAS ADMIN) -->
+        <!-- FORMULÁRIO DE NOVO PAGAMENTO (ADMIN) -->
         <div class="form-section hidden" id="admin-form-section">
-            <h2 class="section-title">Novo Pagamento / Lançamento</h2>
+            <div class="section-header" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                <h2 class="section-title">Novo Pagamento / Lançamento</h2>
+            </div>
             <form id="payment-form" onsubmit="handleFormSubmit(event)">
                 <div class="form-grid">
                     <div class="form-group">
@@ -411,12 +472,17 @@
                         <input type="number" step="0.01" id="p-valor" placeholder="0.00" required>
                     </div>
                 </div>
-                <button type="submit" class="btn-submit" id="btn-save-payment">Cadastrar Pagamento</button>
+                <button type="submit" class="btn-submit" id="btn-save-payment">
+                    <i class="fa-solid fa-floppy-disk"></i> Cadastrar Pagamento
+                </button>
             </form>
         </div>
 
-        <!-- LISTA / TABELA DE PAGAMENTOS -->
-        <h2 class="section-title">Registros Financeiros</h2>
+        <!-- TABELA DE PAGAMENTOS -->
+        <div class="section-header">
+            <i class="fa-solid fa-receipt"></i>
+            <h2 class="section-title">Registros Financeiros</h2>
+        </div>
         <div class="table-container">
             <table>
                 <thead>
@@ -431,7 +497,7 @@
                     </tr>
                 </thead>
                 <tbody id="payments-tbody">
-                    <tr><td colspan="7" style="text-align: center;">Carregando pagamentos...</td></tr>
+                    <tr><td colspan="7" style="text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> Carregando pagamentos...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -443,25 +509,22 @@
     </footer>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFEkqQW6sDpa8UQfxnnHWq823EnVtgShiqENRBAG2oVa25CbRKGJeOTKALCEcqiU0/exec";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz9-gjl5gL_vvt-NefL2NGhRSjh0RjEYHHsKKzDNFEaJJ4gMITTc1QTAGOfV7LDZD8/exec";
         const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=500&auto=format&fit=crop";
 
         let currentUser = null;
 
-        // Inicialização ao carregar a página
         window.addEventListener('DOMContentLoaded', () => {
             checkSession();
             loadSubmenuPhotos();
             loadPagamentos();
         });
 
-        // Função de Callback do Login do Google
         function handleCredentialResponse(response) {
             try {
                 const responsePayload = parseJwt(response.credential);
                 const userEmail = responsePayload.email;
 
-                // Valida na planilha via Apps Script
                 fetch(`${GOOGLE_SCRIPT_URL}?action=login&email=${encodeURIComponent(userEmail)}`)
                     .then(res => res.json())
                     .then(data => {
@@ -533,7 +596,6 @@
             location.reload();
         }
 
-        // CARREGAR FOTOS DA ABA SUBMENU
         function loadSubmenuPhotos() {
             const container = document.getElementById('submenu-cards-container');
             
@@ -568,7 +630,6 @@
                 });
         }
 
-        // CARREGAR TABELA DE PAGAMENTOS
         function loadPagamentos() {
             const tbody = document.getElementById('payments-tbody');
 
@@ -589,9 +650,9 @@
                             <td>${p.categoria || '-'}</td>
                             <td>${p.grupo || '-'}</td>
                             <td>${p.imovel || '-'}</td>
-                            <td style="color: var(--danger); font-weight: 600;">R$ ${parseFloat(p.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                            <td style="color: var(--danger); font-weight: 700;">R$ ${parseFloat(p.valor || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
                             <td class="admin-only-col ${isAdmin ? '' : 'hidden'}">
-                                <button class="btn-delete" onclick="deletePayment('${p.id}')">Excluir</button>
+                                <button class="btn-delete" onclick="deletePayment('${p.id}')"><i class="fa-solid fa-trash"></i> Excluir</button>
                             </td>
                         </tr>
                     `).join('');
@@ -602,7 +663,6 @@
                 });
         }
 
-        // SUBMETER NOVO PAGAMENTO
         function handleFormSubmit(event) {
             event.preventDefault();
             if (!currentUser || currentUser.nivel !== 'admin') {
@@ -612,7 +672,7 @@
 
             const btn = document.getElementById('btn-save-payment');
             btn.disabled = true;
-            btn.textContent = "Salvando...";
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Salvando...`;
 
             const payload = {
                 id: new Date().getTime().toString(),
@@ -632,7 +692,7 @@
             .then(res => res.json())
             .then(resData => {
                 btn.disabled = false;
-                btn.textContent = "Cadastrar Pagamento";
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Cadastrar Pagamento`;
                 if (resData.status === 'success') {
                     document.getElementById('payment-form').reset();
                     loadPagamentos();
@@ -642,13 +702,12 @@
             })
             .catch(err => {
                 btn.disabled = false;
-                btn.textContent = "Cadastrar Pagamento";
+                btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Cadastrar Pagamento`;
                 console.error("Erro ao enviar pagamento:", err);
                 alert("Erro ao tentar salvar pagamento.");
             });
         }
 
-        // EXCLUIR PAGAMENTO
         function deletePayment(id) {
             if (!currentUser || currentUser.nivel !== 'admin') return;
             if (!confirm("Tem certeza de que deseja excluir este pagamento?")) return;
