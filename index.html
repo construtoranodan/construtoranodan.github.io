@@ -938,10 +938,12 @@
     }
 
    function handleCredentialResponse(response) {
+  function handleCredentialResponse(response) {
     const responsePayload = decodeJwtResponse(response.credential);
     const email = responsePayload.email;
 
-    fetch(SCRIPT_URL + "?action=login&email=" + encodeURIComponent(email))
+    // Conectando com o endereço correto da sua planilha
+    fetch(GOOGLE_SCRIPT_URL + "?action=login&email=" + encodeURIComponent(email))
         .then(r => r.json())
         .then(data => {
             console.log("Resposta do Servidor:", data); 
@@ -954,17 +956,23 @@
                     timestamp: new Date().getTime()
                 };
                 localStorage.setItem('NODAN_SESSION', JSON.stringify(sessionData));
-                checkAuth();
+                
+                // COMANDO PARA ENTRAR: Esconde a tela de login e mostra o sistema
+                document.getElementById('login-overlay').classList.add('hidden');
+                
+                // Baixa as fotos e os pagamentos automaticamente
+                if (typeof loadDataFromGoogle === 'function') {
+                    loadDataFromGoogle();
+                }
             } else {
                 alert("Acesso negado para o e-mail: " + email);
-                console.error("Detalhes do erro:", data);
             }
         })
         .catch(error => {
             console.error("Erro na comunicação:", error);
             alert("Erro ao conectar com o servidor.");
         });
-    }
+}
 
     document.addEventListener('DOMContentLoaded', checkSession);
 
