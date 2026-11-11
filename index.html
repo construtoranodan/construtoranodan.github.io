@@ -916,7 +916,7 @@
     // ==========================================
     let currentUser = null;
 
-  function decodeJwtResponse(token) {
+function decodeJwtResponse(token) {
     let base64Url = token.split('.')[1];
     let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     let jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
@@ -924,25 +924,26 @@
     }).join(''));
     return JSON.parse(jsonPayload);
 }
-    function checkSession() {
-        const savedSession = localStorage.getItem('NODAN_SESSION');
-        if (savedSession) {
-            try {
-                currentUser = JSON.parse(savedSession);
-                document.getElementById('login-overlay').classList.add('hidden');
-                loadDataFromGoogle(); // BAIXA FOTOS E PAGAMENTOS
-            } catch(e) {
-                localStorage.removeItem('NODAN_SESSION');
+
+function checkSession() {
+    const savedSession = localStorage.getItem('NODAN_SESSION');
+    if (savedSession) {
+        try {
+            currentUser = JSON.parse(savedSession);
+            document.getElementById('login-overlay').classList.add('hidden');
+            if (typeof loadDataFromGoogle === 'function') {
+                loadDataFromGoogle();
             }
+        } catch(e) {
+            localStorage.removeItem('NODAN_SESSION');
         }
     }
+}
 
-   function handleCredentialResponse(response) {
-  function handleCredentialResponse(response) {
+function handleCredentialResponse(response) {
     const responsePayload = decodeJwtResponse(response.credential);
     const email = responsePayload.email;
 
-    // Conectando com o endereço correto da sua planilha
     fetch(GOOGLE_SCRIPT_URL + "?action=login&email=" + encodeURIComponent(email))
         .then(r => r.json())
         .then(data => {
@@ -957,10 +958,8 @@
                 };
                 localStorage.setItem('NODAN_SESSION', JSON.stringify(sessionData));
                 
-                // COMANDO PARA ENTRAR: Esconde a tela de login e mostra o sistema
                 document.getElementById('login-overlay').classList.add('hidden');
                 
-                // Baixa as fotos e os pagamentos automaticamente
                 if (typeof loadDataFromGoogle === 'function') {
                     loadDataFromGoogle();
                 }
